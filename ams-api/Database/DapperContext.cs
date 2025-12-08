@@ -1,19 +1,18 @@
-﻿namespace ams_api;
-
+﻿using System.Data;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using System.Data;
+
+namespace AMS.Api.Database;
 
 public class DapperContext
 {
-    private readonly IDbConnection _dbConnection;
+    private readonly string _connectionString;
 
     public DapperContext(IConfiguration configuration)
     {
-        string? connectionString = configuration.GetConnectionString("PostgressConnection");
-        _dbConnection = new NpgsqlConnection(connectionString);
+        _connectionString = configuration.GetConnectionString("PostgressConnection");
     }
 
-    public IDbConnection DbConnection => _dbConnection;
-
+    public IDbConnection CreateConnection()
+        => new NpgsqlConnection(_connectionString);
 }
