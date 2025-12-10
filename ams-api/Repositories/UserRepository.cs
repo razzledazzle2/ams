@@ -1,7 +1,7 @@
-﻿namespace ams_api;
+﻿namespace ams_api.Repositories;
 
-using AMS.Api.Database;
-using AMS.Api.Models;
+using ams_api.Database;
+using ams_api.Models;
 using Dapper;
 
 public class UserRepository : IUserRepository

@@ -1,5 +1,5 @@
-﻿namespace ams_api;
-using AMS.Api.Models;
+﻿namespace ams_api.Repositories;
+using ams_api.Models;
 
 public interface IAssetRepository
 {

@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ams_api.Models;
+using ams_api.Repositories;
 
-namespace AMS.Api.Controllers
+namespace ams_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

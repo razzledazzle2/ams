@@ -1,8 +1,8 @@
-﻿namespace ams_api;
+﻿namespace ams_api.Repositories;
 
-using AMS.Api.Models;
+using ams_api.Models;
 using Dapper;
-using AMS.Api.Database;
+using ams_api.Database;
 
 public class AssetRepository : IAssetRepository
 {

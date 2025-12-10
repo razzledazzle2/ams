@@ -1,4 +1,4 @@
-namespace AMS.Api.Models
+namespace ams_api.Models
 {
     public class RegisterRequest
     {

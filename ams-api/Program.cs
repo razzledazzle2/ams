@@ -1,5 +1,5 @@
-using AMS.Api.Database;
-using AMS.Api.Repositories;
+using ams_api.Database;
+using ams_api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

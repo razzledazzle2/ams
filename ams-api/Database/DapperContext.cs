@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 
-namespace AMS.Api.Database;
+namespace ams_api.Database;
 
 public class DapperContext
 {
@@ -10,9 +10,11 @@ public class DapperContext
 
     public DapperContext(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("PostgressConnection");
+        _connectionString =
+            configuration.GetConnectionString("PostgressConnection")
+            ?? throw new Exception("Connection string 'PostgressConnection' not found.");
+        ;
     }
 
-    public IDbConnection CreateConnection()
-        => new NpgsqlConnection(_connectionString);
+    public IDbConnection CreateConnection() => new NpgsqlConnection(_connectionString);
 }

@@ -1,26 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "/root/ams/ams-api/ams-api.csproj": {}
+    "/Users/raymondxuan/own/projects/ams/ams-api/ams-api.csproj": {}
   },
   "projects": {
-    "/root/ams/ams-api/ams-api.csproj": {
+    "/Users/raymondxuan/own/projects/ams/ams-api/ams-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/root/ams/ams-api/ams-api.csproj",
+        "projectUniqueName": "/Users/raymondxuan/own/projects/ams/ams-api/ams-api.csproj",
         "projectName": "ams-api",
-        "projectPath": "/root/ams/ams-api/ams-api.csproj",
-        "packagesPath": "/root/.nuget/packages/",
-        "outputPath": "/root/ams/ams-api/obj/",
+        "projectPath": "/Users/raymondxuan/own/projects/ams/ams-api/ams-api.csproj",
+        "packagesPath": "/Users/raymondxuan/.nuget/packages/",
+        "outputPath": "/Users/raymondxuan/own/projects/ams/ams-api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/root/.nuget/NuGet/NuGet.Config"
+          "/Users/raymondxuan/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "/opt/homebrew/Cellar/dotnet/9.0.8/libexec/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,6 +45,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "Dapper": {
               "target": "Package",
               "version": "[2.1.66, )"
@@ -60,6 +64,10 @@
             "Npgsql": {
               "target": "Package",
               "version": "[10.0.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[10.0.1, )"
             }
           },
           "imports": [
@@ -81,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.112/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/opt/homebrew/Cellar/dotnet/9.0.8/libexec/sdk/9.0.109/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
