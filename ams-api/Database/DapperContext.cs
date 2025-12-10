@@ -11,8 +11,8 @@ public class DapperContext
     public DapperContext(IConfiguration configuration)
     {
         _connectionString =
-            configuration.GetConnectionString("PostgressConnection")
-            ?? throw new Exception("Connection string 'PostgressConnection' not found.");
+            configuration.GetConnectionString("DefaultConnection")
+            ?? throw new Exception("Connection string 'DefaultConnection' not found.");
         ;
     }
 
