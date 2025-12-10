@@ -3,4 +3,6 @@ using AMS.Api.Models;
 public interface IUserRepository
 {
     Task<User?> GetUserByUsernameAsync(string username);
+    Task<Guid> CreateUserAsync(User user);
+
 }

@@ -14,6 +14,28 @@ namespace AMS.Api.Controllers
             _userRepository = userRepository;
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            // check if username exists
+            var existing = await _userRepository.GetUserByUsernameAsync(request.Username);
+            if (existing != null)
+                return BadRequest("Username taken.");
+
+            string hash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+            var newUser = new User
+            {
+                Username = request.Username,
+                PasswordHash = hash,
+                CreatedAt = DateTime.UtcNow,
+            };
+
+            var id = await _userRepository.CreateUserAsync(newUser);
+
+            return Ok(new { id });
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -26,14 +48,7 @@ namespace AMS.Api.Controllers
             if (!valid)
                 return Unauthorized("Invalid username or password.");
 
-            return Ok(
-                new
-                {
-                    user.Id,
-                    user.Username,
-                    user.Role,
-                }
-            );
+            return Ok(new { user.Id, user.Username });
         }
     }
 }
