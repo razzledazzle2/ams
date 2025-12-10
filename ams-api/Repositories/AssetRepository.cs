@@ -29,7 +29,7 @@ public class AssetRepository : IAssetRepository
 
     public async Task<Guid> CreateAssetAsync(Asset asset)
     {
-        var query = @"INSERT INTO assets (name, category, status, condition, purchaseDate, vendor, model, imageUrl, assignedTo, createdAt, updatedAt) 
+        var query = @"INSERT INTO assets (name, category, status, condition, purchase_date, vendor, model, image_url, assigned_to, created_at, updated_at) 
                       VALUES (@name, @category, @status, @condition, @purchaseDate, @vendor, @model, @imageUrl, @assignedTo, @createdAt, @updatedAt) 
                       RETURNING id";
         using var connection = _context.CreateConnection();
@@ -44,12 +44,12 @@ public class AssetRepository : IAssetRepository
                       category = @category, 
                       status = @status, 
                       condition = @condition, 
-                      purchaseDate = @purchaseDate, 
+                      purchase_date = @purchaseDate, 
                       vendor = @vendor, 
                       model = @model, 
-                      imageUrl = @imageUrl, 
-                      assignedTo = @assignedTo, 
-                      updatedAt = NOW()
+                      image_url = @imageUrl, 
+                      assigned_to = @assignedTo, 
+                      updated_at = NOW()
                       WHERE id = @id";
         using var connection = _context.CreateConnection();
         var affectedRows = await connection.ExecuteAsync(query, asset);
