@@ -47,6 +47,9 @@ namespace ams_api.Controllers
 
             if (user == null)
                 return Unauthorized("Invalid username or password.");
+            // Console.WriteLine("=== LOGIN DEBUG ===");
+            // Console.WriteLine($"Username: {user.Username}");
+            // Console.WriteLine($"PasswordHash: '{user.PasswordHash}'");
 
             bool valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
             if (!valid)

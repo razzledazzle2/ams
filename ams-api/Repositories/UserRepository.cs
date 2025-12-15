@@ -17,7 +17,11 @@ public class UserRepository : IUserRepository
     {
         const string sql =
             @"
-            SELECT *
+            SELECT 
+                id,
+                username,
+                password_hash AS ""PasswordHash"",
+                created_at   AS ""CreatedAt""
             FROM users
             WHERE username = @Username;
         ";
