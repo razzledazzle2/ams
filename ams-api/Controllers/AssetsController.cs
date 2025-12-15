@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ams_api.Models;
 using ams_api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ams_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AssetsController : ControllerBase
     {
         private readonly IAssetRepository _assetRepository;
