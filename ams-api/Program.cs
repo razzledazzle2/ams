@@ -3,7 +3,7 @@ using ams_api.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-
+using ams_api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -14,6 +14,8 @@ builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // JWT configuration 
+builder.Services.AddScoped<JwtService>();
+
 var jwt = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
 
@@ -32,7 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-    
+
 builder.Services.AddAuthorization();
 
 
