@@ -13,6 +13,12 @@ import { getAccessToken } from "../utils/auth";
 import { NavigationBar } from "./NavigationBar";
 import { AddAssetDialog } from "./Dialog";
 import { AssetActions } from "./AssetActions";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  ColumnDef,
+} from "@tanstack/react-table";
 
 const API_BASE = "http://localhost:5051";
 
@@ -54,43 +60,96 @@ export const Assets = () => {
     fetchAssets();
   }, []);
 
-  console.log("assets", assets);
+  const columns: ColumnDef<Asset>[] = [
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "category",
+      header: "Category",
+    },
+    {
+      accessorKey: "vendor",
+      header: "Vendor",
+    },
+    {
+      accessorKey: "condition",
+      header: "Condition",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
+      accessorKey: "purchaseDate",
+      header: "Purchase Date",
+      cell: ({ getValue }) => {
+        const value = getValue<string>();
+        return value ? new Date(value).toLocaleDateString() : "—";
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <AssetActions asset={row.original} onUpdated={fetchAssets} />
+      ),
+    },
+  ];
+  const table = useReactTable({
+    data: assets,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
   return (
     <div>
-      <NavigationBar title="Assets" onAdd={() => setAddOpen(true)}></NavigationBar>
-      <AddAssetDialog open={addOpen} onOpenChange={setAddOpen} onAssetCreated={fetchAssets} />
+      <NavigationBar
+        title="Assets"
+        onAdd={() => setAddOpen(true)}
+      ></NavigationBar>
+      <AddAssetDialog
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        onAssetCreated={fetchAssets}
+      />
 
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Vendor</TableHead>
-            <TableHead>Condition</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Purchase Date</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
         </TableHeader>
 
         <TableBody>
-          {assets.map((asset) => (
-            <TableRow key={asset.id}>
-              <TableCell>{asset.name}</TableCell>
-              <TableCell>{asset.category}</TableCell>
-              <TableCell>{asset.vendor}</TableCell>
-              <TableCell>{asset.condition}</TableCell>
-              <TableCell>{asset.status}</TableCell>
-              <TableCell>
-                {asset.purchaseDate
-                  ? new Date(asset.purchaseDate).toLocaleDateString()
-                  : "—"}
-              </TableCell>
-              <TableCell>
-                <AssetActions asset={asset} onUpdated={fetchAssets} />
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center">
+                No assets found.
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
