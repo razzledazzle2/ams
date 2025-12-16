@@ -20,7 +20,11 @@ import {
   ColumnDef,
   SortingState,
   getSortedRowModel,
+  getFilteredRowModel,
+  FilterFn,
 } from "@tanstack/react-table";
+import { Input } from "@/components/ui/input"
+
 import { Icon, SortAscIcon, ArrowUpDown } from "lucide-react";
 
 const API_BASE = "http://localhost:5051";
@@ -42,6 +46,8 @@ export const Assets = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+
   const fetchAssets = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/assets`, {
@@ -101,13 +107,21 @@ export const Assets = () => {
       ),
     },
   ];
+  const globalSearchFilter: FilterFn<Asset> = (row, _columnId, filterValue) => {
+    return JSON.stringify(row.original)
+      .toLowerCase()
+      .includes(filterValue.toLowerCase());
+  };
+
   const table = useReactTable({
     data: assets,
     columns,
-    state: { sorting },
+    state: { sorting, globalFilter },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    globalFilterFn: globalSearchFilter,
   });
   return (
     <div>
@@ -120,6 +134,14 @@ export const Assets = () => {
         onOpenChange={setAddOpen}
         onAssetCreated={fetchAssets}
       />
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Search assets..."
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
 
       <Table>
         <TableHeader>
