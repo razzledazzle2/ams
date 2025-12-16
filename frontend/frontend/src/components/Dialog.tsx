@@ -24,10 +24,11 @@ const API_BASE = "http://localhost:5051";
 
 type Props = {
   onAssetCreated: () => void;
+  open,
+  onOpenChange: (open: boolean) => void;
 };
-export function AddAssetDialog({ onAssetCreated }: Props) {
+export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
 
   // Form data
   const [name, setName] = useState("");
@@ -41,7 +42,7 @@ export function AddAssetDialog({ onAssetCreated }: Props) {
   >("Available");
 
   const close = () => {
-    setOpen(false);
+    onOpenChange(false);
     setName("");
     setCategory("");
     setPurchaseDate("");
@@ -81,11 +82,7 @@ export function AddAssetDialog({ onAssetCreated }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-300">Add Asset</Button>
-      </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -161,7 +158,7 @@ export function AddAssetDialog({ onAssetCreated }: Props) {
             <Button
               type="button"
               onClick={close}
-              className="bg-red-500 hover:bg-red-900"
+              variant="outline"
             >
               Cancel
             </Button>

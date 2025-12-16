@@ -1,14 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { ArrowLeft, LogOut, Plus } from "lucide-react";
 import { logout } from "../utils/auth";
 
-export const NavigationBar = ({ isBackButton = false, title}) => {
+export const NavigationBar = ({ onAdd, title }) => {
   const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   const handleLogout = () => {
     logout();
@@ -17,17 +13,15 @@ export const NavigationBar = ({ isBackButton = false, title}) => {
 
   return (
     <header className="flex justify-between items-center p-4 bg-[white]">
-      {isBackButton ? (
-        <Button variant="ghost" onClick={() => handleBack()}>
-          <ArrowLeft />
-        </Button>
-      ) : (
-        <div></div> // placeholder for spacing
-      )}
       <h1 className="text-lg font-medium">{title}</h1>
-      <Button variant="ghost" onClick={() => handleLogout()}>
-        <LogOut />
-      </Button>
+      <div>
+        <Button variant="ghost" onClick={() => onAdd()}>
+          <Plus />
+        </Button>
+        <Button variant="ghost" onClick={() => handleLogout()}>
+          <LogOut />
+        </Button>
+      </div>
     </header>
   );
 };

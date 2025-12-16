@@ -28,7 +28,8 @@ type Asset = {
 };
 
 export const Assets = () => {
-  // const [showModal, setShowModal] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const fetchAssets = async () => {
@@ -56,8 +57,8 @@ export const Assets = () => {
   console.log("assets", assets);
   return (
     <div>
-      <NavigationBar isBackButton={false} title="Assets"></NavigationBar>
-      <AddAssetDialog onAssetCreated={fetchAssets} />
+      <NavigationBar title="Assets" onAdd={() => setAddOpen(true)}></NavigationBar>
+      <AddAssetDialog open={addOpen} onOpenChange={setAddOpen} onAssetCreated={fetchAssets} />
 
       <Table>
         <TableHeader>
