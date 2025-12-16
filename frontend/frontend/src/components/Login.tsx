@@ -1,6 +1,8 @@
-import { Box, Input, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { saveAccessToken } from "../utils/auth";
 
 const API_BASE = "http://localhost:5051";
@@ -43,63 +45,46 @@ export const Login = () => {
   };
 
   return (
-    <Box
-      sx={{
-        width: "100vw",
-        height: "100svh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#20283E",
-      }}
-    >
-      <Box
-        sx={{
-          width: "90%",
-          maxWidth: "400px",
-          backgroundColor: "#2D3B58",
-          padding: "30px",
-          borderRadius: "10px",
-        }}
-      >
+    <div className="flex min-h-screen items-center justify-center bg-[#dbe2f3]">
+      <Card className="w-[90%] max-w-sm bg-[#f9f9fa] text-black">
+        <CardHeader>
+          <CardTitle className="text-center">Login</CardTitle>
+        </CardHeader>
 
-        <Typography variant="h5" sx={{ color: "white", textAlign: "center", mb: 2 }}>
-          Login
-        </Typography>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-[#ffffff] text-black"
+            />
 
-        <form onSubmit={handleSubmit}>
-          <Input
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            fullWidth
-            sx={{ mb: 2, backgroundColor: "#1A2338", color: "white", p: 1 }}
-          />
+            <Input
+              placeholder="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-[#ffffff] text-black"
+            />
 
-          <Input
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            sx={{ mb: 2, backgroundColor: "#1A2338", color: "white", p: 1 }}
-          />
+            {errorMessage && (
+              <p className="text-sm text-red-400">{errorMessage}</p>
+            )}
 
-          {errorMessage && (
-            <Typography sx={{ color: "red", mb: 1 }}>{errorMessage}</Typography>
-          )}
+            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-300">
+              Login
+            </Button>
 
-          <Button type="submit" variant="contained" fullWidth>
-            Login
-          </Button>
-
-          <Typography sx={{ textAlign: "center", mt: 2, color: "white" }}>
-            <Link to="/register" style={{ color: "#B0C4DE" }}>
-              Don’t have an account? Register
-            </Link>
-          </Typography>
-        </form>
-      </Box>
-    </Box>
+            <p className="text-center text-sm text-gray-500">
+              Don’t have an account?{" "}
+              <Link to="/register" className="text-blue-500 hover:underline">
+                Register
+              </Link>
+            </p>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

@@ -1,6 +1,9 @@
-import { Box, Input, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const API_BASE = "http://localhost:5051";
 
@@ -50,75 +53,60 @@ export const Register = () => {
   };
 
   return (
-    <Box
-      sx={{
-        width: "100vw",
-        height: "100svh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#20283E",
-      }}
-    >
-      <Box
-        sx={{
-          width: "90%",
-          maxWidth: "400px",
-          backgroundColor: "#2D3B58",
-          padding: "30px",
-          borderRadius: "10px",
-        }}
-      >
-        <Typography variant="h5" sx={{ color: "white", textAlign: "center", mb: 2 }}>
-          Register
-        </Typography>
-
-        <form onSubmit={handleSubmit}>
-          <Input
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            fullWidth
-            sx={{ mb: 2, backgroundColor: "#1A2338", color: "white", p: 1 }}
-          />
-
-          <Input
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            sx={{ mb: 2, backgroundColor: "#1A2338", color: "white", p: 1 }}
-          />
-
-          <Input
-            placeholder="Confirm Password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            fullWidth
-            sx={{ mb: 2, backgroundColor: "#1A2338", color: "white", p: 1 }}
-          />
-
-          {errorMessage && (
-            <Typography sx={{ color: "red", mb: 1 }}>{errorMessage}</Typography>
-          )}
-
-          {successMessage && (
-            <Typography sx={{ color: "green", mb: 1 }}>{successMessage}</Typography>
-          )}
-
-          <Button type="submit" variant="contained" fullWidth>
+    <div className="flex min-h-screen items-center justify-center bg-[#dbe2f3]">
+      <Card className="w-[90%] max-w-sm bg-[#f9f9fa] text-black">
+        <CardHeader>
+          <CardTitle className="text-center">
             Register
-          </Button>
+          </CardTitle>
+        </CardHeader>
 
-          <Typography sx={{ textAlign: "center", mt: 2, color: "white" }}>
-            <Link to="/login" style={{ color: "#B0C4DE" }}>
-              Already have an account? Login
-            </Link>
-          </Typography>
-        </form>
-      </Box>
-    </Box>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="bg-[#ffffff] text-black"
+            />
+
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-[#ffffff] text-black"
+            />
+
+            <Input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="bg-[#ffffff] text-black"
+            />
+
+            {errorMessage && (
+              <p className="text-sm text-red-400">{errorMessage}</p>
+            )}
+
+            {successMessage && (
+              <p className="text-sm text-green-400">{successMessage}</p>
+            )}
+
+            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-300">
+              Register
+            </Button>
+
+            <p className="text-center text-sm text-gray-500">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-500 hover:underline">
+                Login
+              </Link>
+            </p>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
