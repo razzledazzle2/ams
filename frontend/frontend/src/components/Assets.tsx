@@ -18,7 +18,10 @@ import {
   getCoreRowModel,
   flexRender,
   ColumnDef,
+  SortingState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
+import { Icon, SortAscIcon, ArrowUpDown } from "lucide-react";
 
 const API_BASE = "http://localhost:5051";
 
@@ -38,6 +41,7 @@ export const Assets = () => {
 
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const fetchAssets = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/assets`, {
@@ -100,7 +104,10 @@ export const Assets = () => {
   const table = useReactTable({
     data: assets,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
   return (
     <div>
@@ -120,12 +127,25 @@ export const Assets = () => {
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  <div className="flex items-center gap-2">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+
+                    {header.column.getCanSort() && (
+                      <button
+                        onClick={header.column.getToggleSortingHandler()}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        {header.column.getIsSorted() === "asc" && "▲"}
+                        {header.column.getIsSorted() === "desc" && "▼"}
+                        {!header.column.getIsSorted() && (
+                          <ArrowUpDown size={14} />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </TableHead>
               ))}
             </TableRow>
