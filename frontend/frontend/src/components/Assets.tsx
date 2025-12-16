@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAccessToken } from "../utils/auth";
 import { NavigationBar } from "./NavigationBar";
 import { AddAssetDialog } from "./Dialog";
+import { AssetActions } from "./AssetActions";
 
 const API_BASE = "http://localhost:5051";
 
@@ -85,6 +86,7 @@ export const Assets = () => {
                   : "—"}
               </TableCell>
               <TableCell>
+                <AssetActions asset={asset} onUpdated={fetchAssets} />
               </TableCell>
             </TableRow>
           ))}

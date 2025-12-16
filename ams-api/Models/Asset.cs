@@ -7,7 +7,7 @@ public class Asset
     public string? Category { get; set; }
     public string Status { get; set; } = "available";
     public string? Condition { get; set; }
-    public DateOnly? PurchaseDate { get; set; }
+    public DateTime? PurchaseDate { get; set; }
     public string? Vendor { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
