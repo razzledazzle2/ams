@@ -19,7 +19,10 @@ type Asset = {
   id: string;
   name: string;
   category: string;
-  value: number;
+  status: "Available" | "Assigned" | "Maintenance";
+  vendor: string;
+  condition: string;
+  purchaseDate: string;
   createdAt: string;
 };
 
@@ -49,12 +52,41 @@ export const Assets = () => {
     fetchAssets();
   }, []);
 
+  console.log("assets", assets);
   return (
     <div>
       <NavigationBar isBackButton={false} title="Assets"></NavigationBar>
-      <AddAssetDialog onAssetCreated={() => {}} />
+      <AddAssetDialog onAssetCreated={fetchAssets} />
 
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Vendor</TableHead>
+            <TableHead>Condition</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Purchase Date</TableHead>
+          </TableRow>
+        </TableHeader>
 
+        <TableBody>
+          {assets.map((asset) => (
+            <TableRow key={asset.id}>
+              <TableCell>{asset.name}</TableCell>
+              <TableCell>{asset.category}</TableCell>
+              <TableCell>{asset.vendor}</TableCell>
+              <TableCell>{asset.condition}</TableCell>
+              <TableCell>{asset.status}</TableCell>
+              <TableCell>
+                {asset.purchaseDate
+                  ? new Date(asset.purchaseDate).toLocaleDateString()
+                  : "—"}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
