@@ -25,8 +25,11 @@ type Asset = {
 export const Assets = () => {
   return (
   <div>
-    <NavigationBar></NavigationBar>
-    <h1>Assets Page</h1>
+    <NavigationBar
+      isBackButton={false}
+      title="Assets"
+    ></NavigationBar>
+
   </div>
   );
 };

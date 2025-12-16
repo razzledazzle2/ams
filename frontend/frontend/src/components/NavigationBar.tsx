@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { logout } from "../utils/auth";
 
-export const NavigationBar = ({ isBackButton = false }) => {
+export const NavigationBar = ({ isBackButton = false, title}) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -24,6 +24,7 @@ export const NavigationBar = ({ isBackButton = false }) => {
       ) : (
         <div></div> // placeholder for spacing
       )}
+      <h1 className="text-lg font-medium">{title}</h1>
       <Button variant="ghost" onClick={() => handleLogout()}>
         <LogOut />
       </Button>
