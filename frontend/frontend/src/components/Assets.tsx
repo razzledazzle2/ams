@@ -24,16 +24,37 @@ type Asset = {
 };
 
 export const Assets = () => {
-  const [showModal, setShowModal] = useState(false);
-  
+  // const [showModal, setShowModal] = useState(false);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const fetchAssets = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/assets`, {
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch assets");
+
+      const data = await res.json();
+      setAssets(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchAssets();
+  }, []);
+
   return (
     <div>
       <NavigationBar isBackButton={false} title="Assets"></NavigationBar>
       <AddAssetDialog onAssetCreated={() => {}} />
-      {/* <Button 
-        className="m-4 bg-blue-500 hover:bg-blue-300"
-        onClick={() => setShowModal(true)}
-      >Add Asset</Button> */}
+
+
     </div>
   );
 };

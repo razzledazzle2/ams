@@ -9,6 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -19,17 +26,28 @@ type Props = {
   onAssetCreated: () => void;
 };
 export function AddAssetDialog({ onAssetCreated }: Props) {
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  // Form data
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [value, setValue] = useState<number | "">("");
-  const [loading, setLoading] = useState(false);
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [vendorDetails, setVendorDetails] = useState("");
+  const [condition, setCondition] = useState("");
+  const [status, setStatus] = useState<
+    "Available" | "Assigned" | "Maintenance"
+  >("Available");
 
-  const [open, setOpen] = useState(false);
   const close = () => {
     setOpen(false);
     setName("");
     setCategory("");
-    setValue("");
+    setPurchaseDate("");
+    setVendorDetails("");
+    setCondition("");
+    setStatus("Available");
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +62,10 @@ export function AddAssetDialog({ onAssetCreated }: Props) {
         body: JSON.stringify({
           name,
           category,
-          value,
+          purchaseDate,
+          vendor: vendorDetails,
+          condition,
+          status,
         }),
       });
 
@@ -76,9 +97,8 @@ export function AddAssetDialog({ onAssetCreated }: Props) {
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label>Name</Label>
               <Input
-                id="name"
                 placeholder="e.g. Plates"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -87,33 +107,62 @@ export function AddAssetDialog({ onAssetCreated }: Props) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="category">Category</Label>
+              <Label>Category</Label>
               <Input
-                id="category"
                 placeholder="e.g. Kitchenware"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
               />
             </div>
-
             <div className="grid gap-2">
-              <Label htmlFor="value">Value</Label>
+              <Label>Purchase Date</Label>
               <Input
-                id="value"
-                type="number"
-                placeholder="100"
-                value={value}
-                onChange={(e) =>
-                  setValue(e.target.value === "" ? "" : Number(e.target.value))
-                }
+                type="date"
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
                 required
               />
+            </div>
+            <div className="grid gap-2">
+              <Label>Vendor Details</Label>
+              <Input
+                placeholder="e.g. Maxwell Williams"
+                value={vendorDetails}
+                onChange={(e) => setVendorDetails(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Product Condition</Label>
+              <Input
+                placeholder="e.g. New / Used / Faulty"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Status</Label>
+              <Select value={status} onValueChange={(v) => setStatus(v as "Available" | "Assigned" | "Maintenance")}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Available">Available</SelectItem>
+                  <SelectItem value="Assigned">Assigned</SelectItem>
+                  <SelectItem value="Maintenance">Maintenance</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" onClick={close} className="bg-red-500 hover:bg-red-900">
+            <Button
+              type="button"
+              onClick={close}
+              className="bg-red-500 hover:bg-red-900"
+            >
               Cancel
             </Button>
 
