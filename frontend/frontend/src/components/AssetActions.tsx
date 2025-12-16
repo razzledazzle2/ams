@@ -1,15 +1,25 @@
-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { EditAssetDialog } from "./EditAssetDialog";
 import { DeleteAssetDialog } from "./DeleteAssetDialog";
-export const AssetActions = ({asset, onUpdated}) => {
+import { Pencil, Trash } from "lucide-react";
+
+export const AssetActions = ({ asset, onUpdated }) => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   return (
     <div>
-      <Button onClick={() => setEditOpen(true)}>Edit</Button>
-      <Button onClick={() => setDeleteOpen(true)}>Delete</Button>
+      <Button variant="ghost" size="icon" onClick={() => setEditOpen(true)}>
+        <Pencil />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="    text-red-600 "
+        onClick={() => setDeleteOpen(true)}
+      >
+        <Trash />
+      </Button>
       <EditAssetDialog
         asset={asset}
         open={editOpen}
@@ -24,7 +34,6 @@ export const AssetActions = ({asset, onUpdated}) => {
         onOpenChange={setDeleteOpen}
         onDeleted={onUpdated}
       />
-
     </div>
-  )
-}
+  );
+};
