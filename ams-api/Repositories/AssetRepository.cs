@@ -1,19 +1,34 @@
 ﻿namespace ams_api.Repositories;
 
+using ams_api.Database;
 using ams_api.Models;
 using Dapper;
-using ams_api.Database;
 
 public class AssetRepository : IAssetRepository
 {
     private readonly DapperContext _context;
+
     public AssetRepository(DapperContext context)
     {
         _context = context;
     }
+
     public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
     {
-        var query = "SELECT * FROM assets";
+        var query =
+        @"
+            SELECT 
+            id,
+            name,
+            category,
+            status,
+            condition,
+            purchase_date AS ""PurchaseDate"",
+            vendor,
+            created_at AS ""CreatedAt"",
+            updated_at AS ""UpdatedAt""
+            FROM assets
+        ";
         using var connection = _context.CreateConnection();
         var assets = await connection.QueryAsync<Asset>(query);
         return assets;
@@ -29,7 +44,8 @@ public class AssetRepository : IAssetRepository
 
     public async Task<Guid> CreateAssetAsync(Asset asset)
     {
-        var query = @"INSERT INTO assets (name, category, status, condition, purchase_date, vendor, created_at, updated_at) 
+        var query =
+            @"INSERT INTO assets (name, category, status, condition, purchase_date, vendor, created_at, updated_at) 
                       VALUES (@name, @category, @status, @condition, @purchaseDate, @vendor, @createdAt, @updatedAt) 
                       RETURNING id";
         using var connection = _context.CreateConnection();
@@ -39,7 +55,8 @@ public class AssetRepository : IAssetRepository
 
     public async Task<bool> UpdateAssetAsync(Asset asset)
     {
-        var query = @"UPDATE assets SET 
+        var query =
+            @"UPDATE assets SET 
                       name = @name, 
                       category = @category, 
                       status = @status, 
