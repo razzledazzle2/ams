@@ -177,7 +177,7 @@ export function EditAssetDialog({
             <Button
               type="button"
               onClick={close}
-              className="bg-red-500 hover:bg-red-900"
+              className="bg-white text-gray hover:bg-gray-100"
             >
               Cancel
             </Button>
