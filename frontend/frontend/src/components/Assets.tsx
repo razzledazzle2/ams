@@ -67,6 +67,7 @@ export const Assets = () => {
             <TableHead>Condition</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Purchase Date</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -82,6 +83,8 @@ export const Assets = () => {
                 {asset.purchaseDate
                   ? new Date(asset.purchaseDate).toLocaleDateString()
                   : "—"}
+              </TableCell>
+              <TableCell>
               </TableCell>
             </TableRow>
           ))}
