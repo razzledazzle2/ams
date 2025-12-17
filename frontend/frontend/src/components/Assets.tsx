@@ -139,7 +139,7 @@ export const Assets = () => {
         onOpenChange={setAddOpen}
         onAssetCreated={fetchAssets}
       />
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 ml-4">
         <Input
           placeholder="Search assets..."
           value={globalFilter}
@@ -147,58 +147,62 @@ export const Assets = () => {
           className="max-w-sm"
         />
       </div>
+      <div className="mx-auto max-w-7xl px-4">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    <div className="flex items-center gap-2">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
 
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  <div className="flex items-center gap-2">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-
-                    {header.column.getCanSort() && (
-                      <button
-                        onClick={header.column.getToggleSortingHandler()}
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        {header.column.getIsSorted() === "asc" && "▲"}
-                        {header.column.getIsSorted() === "desc" && "▼"}
-                        {!header.column.getIsSorted() && (
-                          <ArrowUpDown size={14} />
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-
-        <TableBody>
-          {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                      {header.column.getCanSort() && (
+                        <button
+                          onClick={header.column.getToggleSortingHandler()}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          {header.column.getIsSorted() === "asc" && "▲"}
+                          {header.column.getIsSorted() === "desc" && "▼"}
+                          {!header.column.getIsSorted() && (
+                            <ArrowUpDown size={14} />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </TableHead>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center">
-                No assets found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            ))}
+          </TableHeader>
+
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  No assets found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
