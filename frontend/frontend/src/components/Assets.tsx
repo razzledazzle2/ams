@@ -23,10 +23,11 @@ import {
   getFilteredRowModel,
   FilterFn,
 } from "@tanstack/react-table";
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
+import { logout } from "../utils/auth";
 
 import { Icon, SortAscIcon, ArrowUpDown } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 const API_BASE = "http://localhost:5051";
 
 type Asset = {
@@ -48,6 +49,7 @@ export const Assets = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
+  const navigate = useNavigate();
   const fetchAssets = async () => {
     try {
       const res = await fetch(`${API_BASE}/api/assets`, {
@@ -56,6 +58,12 @@ export const Assets = () => {
         },
       });
 
+      // if unauthorised, logout
+      if (res.status === 401) {
+        logout();
+        navigate("/login");
+        return;
+      }
       if (!res.ok) throw new Error("Failed to fetch assets");
 
       const data = await res.json();
