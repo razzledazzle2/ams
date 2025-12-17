@@ -10,6 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/apiFetch";
 import { getAccessToken } from "@/utils/auth";
 type Props = {
   asset: any;
@@ -27,11 +28,8 @@ export function DeleteAssetDialog({
 }: Props) {
   const handleDelete = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/assets/${asset.id}`, {
+      const res = await apiFetch(`${API_BASE}/api/assets/${asset.id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-        },
       });
 
       if (!res.ok) throw new Error("Failed to delete asset");

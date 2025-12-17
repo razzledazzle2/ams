@@ -27,7 +27,12 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<RefreshToken?> GetByIdAsync(Guid id)
     {
         const string sql = @"
-            SELECT id, user_id, expires_at, revoked_at, created_at
+            SELECT 
+                id as Id, 
+                user_id as UserId, 
+                expires_at as ExpiresAt, 
+                revoked_at as RevokedAt, 
+                created_at as CreatedAt
             FROM refresh_tokens
             WHERE id = @Id;
         ";

@@ -34,6 +34,8 @@ builder
             ValidIssuer = jwt["Issuer"],
             ValidAudience = jwt["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key),
+            // TODO: remove testing 
+            ClockSkew = TimeSpan.Zero
         };
     });
 

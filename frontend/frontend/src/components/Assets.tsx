@@ -28,6 +28,7 @@ import { logout } from "../utils/auth";
 
 import { Icon, SortAscIcon, ArrowUpDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "@/lib/apiFetch";
 const API_BASE = "http://localhost:5051";
 
 type Asset = {
@@ -52,11 +53,7 @@ export const Assets = () => {
   const navigate = useNavigate();
   const fetchAssets = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/assets`, {
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-        },
-      });
+      const res = await apiFetch(`${API_BASE}/api/assets`);
 
       // if unauthorised, logout
       if (res.status === 401) {

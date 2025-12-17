@@ -27,8 +27,9 @@ public class JwtService
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:AccessTokenMinutes"]!));
-
+        // var expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:AccessTokenMinutes"]!));
+        // TODO: Fix 
+        var expires = DateTime.UtcNow.AddSeconds(int.Parse(_config["Jwt:AccessTokenSeconds"]!));
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
@@ -53,7 +54,10 @@ public class JwtService
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var expires = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenDays"]!));
+        // var expires = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenDays"]!));
+        var expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:TestingRefreshMinutes"]!));
+
+        // TODO FIX UP
 
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],

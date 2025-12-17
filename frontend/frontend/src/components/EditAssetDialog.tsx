@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { getAccessToken } from "@/utils/auth";
+import { apiFetch } from "@/lib/apiFetch";
 const API_BASE = "http://localhost:5051";
 
 type Props = {
@@ -68,11 +69,10 @@ export function EditAssetDialog({
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/assets/${asset.id}`, {
+      const res = await apiFetch(`${API_BASE}/api/assets/${asset.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getAccessToken()}`,
         },
         body: JSON.stringify({
           name,
