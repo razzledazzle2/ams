@@ -26,6 +26,7 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
     // refresh expires or invalid --> logout
     if (!refresh.ok) {
       logout();
+      alert("Session expired. Please log in again.");
       throw new Error("Session expired");
     }
     // save new access token
