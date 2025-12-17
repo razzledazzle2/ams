@@ -76,22 +76,43 @@ namespace ams_api.Controllers
                 {
                     Id = refreshTokenId,
                     UserId = user.Id,
-                    ExpiresAt = DateTime.UtcNow.AddDays(7),
+                    ExpiresAt = DateTime.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
                     CreatedAt = DateTime.UtcNow,
                 }
             );
-            return Ok(new { accessToken = token, refreshToken });
+            Response.Cookies.Append(
+                "refresh_token",
+                refreshToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
+                    Path = "/api/users/refresh",
+                }
+            );
+
+            return Ok(new { accessToken = token });
         }
 
         [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshRequest req)
+        public async Task<IActionResult> Refresh()
         {
-            var handler = new JwtSecurityTokenHandler();
+            var refreshToken = Request.Cookies["refresh_token"];
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized("Missing refresh token");
 
+            var handler = new JwtSecurityTokenHandler();
             JwtSecurityToken token;
+
             try
             {
-                token = handler.ReadJwtToken(req.RefreshToken);
+                token = handler.ReadJwtToken(refreshToken);
             }
             catch
             {
@@ -137,8 +158,22 @@ namespace ams_api.Controllers
                     CreatedAt = DateTime.UtcNow,
                 }
             );
+            Response.Cookies.Append(
+                "refresh_token",
+                newRefresh,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
+                    Path = "/api/users/refresh",
+                }
+            );
 
-            return Ok(new { accessToken = newAccess, refreshToken = newRefresh });
+            return Ok(new { accessToken = newAccess });
         }
     }
 }
