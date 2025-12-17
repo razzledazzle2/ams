@@ -1,8 +1,11 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using ams_api.Models;
 using ams_api.Repositories;
 using ams_api.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+
 namespace ams_api.Controllers
 {
     [Route("api/[controller]")]
@@ -11,11 +14,17 @@ namespace ams_api.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly JwtService _jwtService;
+        private readonly IRefreshTokenRepository _refreshTokenRepo;
 
-        public UsersController(IUserRepository userRepository, JwtService jwtService)
+        public UsersController(
+            IUserRepository userRepository,
+            JwtService jwtService,
+            IRefreshTokenRepository refreshTokenRepo
+        )
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
+            _refreshTokenRepo = refreshTokenRepo;
         }
 
         [HttpPost("register")]
@@ -54,8 +63,80 @@ namespace ams_api.Controllers
             bool valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
             if (!valid)
                 return Unauthorized("Invalid username or password.");
-            var token = _jwtService.GenerateToken(user.Id, user.Username);
-            return Ok(new { accessToken = token });
+
+            // revoke old tokens
+            await _refreshTokenRepo.RevokeAllForUserAsync(user.Id);
+
+            var token = _jwtService.GenerateAccessToken(user.Id, user.Username);
+            var refreshTokenId = Guid.NewGuid();
+
+            var refreshToken = _jwtService.GenerateRefreshToken(user.Id, refreshTokenId);
+            await _refreshTokenRepo.CreateAsync(
+                new RefreshToken
+                {
+                    Id = refreshTokenId,
+                    UserId = user.Id,
+                    ExpiresAt = DateTime.UtcNow.AddDays(7),
+                    CreatedAt = DateTime.UtcNow,
+                }
+            );
+            return Ok(new { accessToken = token, refreshToken });
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequest req)
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            JwtSecurityToken token;
+            try
+            {
+                token = handler.ReadJwtToken(req.RefreshToken);
+            }
+            catch
+            {
+                return Unauthorized("Invalid refresh token");
+            }
+
+            // ensure it is a refresh token
+            if (token.Claims.First(c => c.Type == "type").Value != "refresh")
+                return Unauthorized();
+
+            var userId = Guid.Parse(token.Subject);
+
+            // get the unique id of token
+            var jti = Guid.Parse(
+                token.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value
+            );
+
+            var stored = await _refreshTokenRepo.GetByIdAsync(jti);
+
+            // check if refresh token is revoked or expired
+            if (stored == null || stored.RevokedAt != null || stored.ExpiresAt < DateTime.UtcNow)
+            {
+                return Unauthorized("Refresh token expired");
+            }
+
+            // revoke old one
+            await _refreshTokenRepo.RevokeAsync(jti);
+
+            var newRefreshId = Guid.NewGuid();
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            var newAccess = _jwtService.GenerateAccessToken(userId, user.Username);
+            var newRefresh = _jwtService.GenerateRefreshToken(userId, newRefreshId);
+
+            await _refreshTokenRepo.CreateAsync(
+                new RefreshToken
+                {
+                    Id = newRefreshId,
+                    UserId = userId,
+                    ExpiresAt = DateTime.UtcNow.AddDays(7),
+                    CreatedAt = DateTime.UtcNow,
+                }
+            );
+
+            return Ok(new { accessToken = newAccess, refreshToken = newRefresh });
         }
     }
 }
