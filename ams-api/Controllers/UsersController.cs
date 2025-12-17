@@ -1,10 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using ams_api.Models;
 using ams_api.Repositories;
 using ams_api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 
 namespace ams_api.Controllers
 {
@@ -131,7 +131,9 @@ namespace ams_api.Controllers
                 {
                     Id = newRefreshId,
                     UserId = userId,
-                    ExpiresAt = DateTime.UtcNow.AddDays(7),
+                    ExpiresAt = DateTime.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
                     CreatedAt = DateTime.UtcNow,
                 }
             );
