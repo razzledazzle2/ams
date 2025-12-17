@@ -42,4 +42,17 @@ public class UserRepository : IUserRepository
         using var connection = _context.CreateConnection();
         return await connection.ExecuteScalarAsync<Guid>(sql, user);
     }
+
+    public async Task<User?> GetByIdAsync(Guid id)
+    {
+        const string sql =
+        @"
+            SELECT id, username, password_hash AS PasswordHash, created_at
+            FROM users
+            WHERE id = @Id;
+        ";
+
+        using var conn = _context.CreateConnection();
+        return await conn.QuerySingleOrDefaultAsync<User>(sql, new { Id = id });
+    }
 }
