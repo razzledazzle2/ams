@@ -18,9 +18,6 @@ namespace ams_api.Controllers
         private readonly IRefreshTokenRepository _refreshTokenRepo;
         private readonly IConfiguration _config;
 
-        private int RefreshExpiryMinutes =>
-            int.TryParse(_config["Jwt:TestingRefreshMinutes"], out var mins) ? mins : 2; // fallback (1 day)
-
         public UsersController(
             IUserRepository userRepository,
             JwtService jwtService,
@@ -63,9 +60,6 @@ namespace ams_api.Controllers
 
             if (user == null)
                 return Unauthorized("Invalid username or password.");
-            // Console.WriteLine("=== LOGIN DEBUG ===");
-            // Console.WriteLine($"Username: {user.Username}");
-            // Console.WriteLine($"PasswordHash: '{user.PasswordHash}'");
 
             bool valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
             if (!valid)
@@ -79,17 +73,14 @@ namespace ams_api.Controllers
 
             var refreshToken = _jwtService.GenerateRefreshToken(user.Id, refreshTokenId);
 
-            var refreshExpiresAt = DateTime.UtcNow.AddMinutes(RefreshExpiryMinutes);
             await _refreshTokenRepo.CreateAsync(
                 new RefreshToken
                 {
                     Id = refreshTokenId,
                     UserId = user.Id,
-                    // ExpiresAt = DateTime.UtcNow.AddDays(
-                    //     int.Parse(_config["Jwt:RefreshTokenDays"]!)
-                    // ),
-                    ExpiresAt = refreshExpiresAt,
-
+                    ExpiresAt = DateTime.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
                     CreatedAt = DateTime.UtcNow,
                 }
             );
@@ -101,10 +92,9 @@ namespace ams_api.Controllers
                     HttpOnly = true,
                     Secure = false,
                     SameSite = SameSiteMode.Lax,
-                    // Expires = DateTimeOffset.UtcNow.AddDays(
-                    //     int.Parse(_config["Jwt:RefreshTokenDays"]!)
-                    // ),
-                    Expires = refreshExpiresAt,
+                    Expires = DateTime.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
 
                     Path = "/",
                 }
@@ -117,18 +107,6 @@ namespace ams_api.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            Console.WriteLine("=== REFRESH ENDPOINT HIT ===");
-            Console.WriteLine("Cookies received:");
-
-            foreach (var c in Request.Cookies)
-            {
-                Console.WriteLine($"{c.Key} = {c.Value}");
-            }
-            Console.WriteLine($"Cookie count: {Request.Cookies.Count}");
-            Console.WriteLine(
-                $"refresh_token present: {Request.Cookies.ContainsKey("refresh_token")}"
-            );
-
             var refreshToken = Request.Cookies["refresh_token"];
             if (string.IsNullOrEmpty(refreshToken))
                 return Unauthorized("Missing refresh token");
@@ -139,12 +117,9 @@ namespace ams_api.Controllers
             try
             {
                 token = handler.ReadJwtToken(refreshToken);
-                Console.WriteLine($"JWT decoded successfully");
-                Console.WriteLine($"JWT exp: {token.ValidTo}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"JWT decode failed: {ex.Message}");
                 return Unauthorized("Invalid refresh token");
             }
 
@@ -152,55 +127,33 @@ namespace ams_api.Controllers
             var typeClaim = token.Claims.FirstOrDefault(c => c.Type == "type");
             if (typeClaim?.Value != "refresh")
             {
-                Console.WriteLine($"Not a refresh token. Type: {typeClaim?.Value}");
                 return Unauthorized("Invalid token type");
             }
 
             var userId = Guid.Parse(token.Subject);
-            Console.WriteLine($"User ID: {userId}");
 
             // get the unique id of token
             var jti = Guid.Parse(
                 token.Claims.First(c => c.Type == JwtRegisteredClaimNames.Jti).Value
             );
-            Console.WriteLine($"Token JTI: {jti}");
 
             var stored = await _refreshTokenRepo.GetByIdAsync(jti);
-
-            Console.WriteLine($"=== DATABASE CHECK ===");
-            Console.WriteLine($"Stored token found: {stored != null}");
-            if (stored != null)
-            {
-                Console.WriteLine($"Token revoked: {stored.RevokedAt != null}");
-                Console.WriteLine(
-                    $"Token expires at (DB): {stored.ExpiresAt:yyyy-MM-dd HH:mm:ss} UTC"
-                );
-                Console.WriteLine(
-                    $"Current UTC time:      {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC"
-                );
-                Console.WriteLine($"Token expired: {stored.ExpiresAt < DateTime.UtcNow}");
-            }
 
             // check if refresh token is revoked or expired
             if (stored == null)
             {
-                Console.WriteLine("FAIL: Token not found in database");
                 return Unauthorized("Refresh token not found");
             }
 
             if (stored.RevokedAt != null)
             {
-                Console.WriteLine("FAIL: Token has been revoked");
                 return Unauthorized("Refresh token revoked");
             }
 
             if (stored.ExpiresAt < DateTime.UtcNow)
             {
-                Console.WriteLine("FAIL: Token has expired");
                 return Unauthorized("Refresh token expired");
             }
-
-            Console.WriteLine("SUCCESS: Token is valid, generating new tokens");
 
             // revoke old one
             await _refreshTokenRepo.RevokeAsync(jti);
@@ -216,7 +169,9 @@ namespace ams_api.Controllers
                 {
                     Id = newRefreshId,
                     UserId = userId,
-                    ExpiresAt = DateTime.UtcNow.AddMinutes(RefreshExpiryMinutes),
+                    ExpiresAt = DateTime.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
                     CreatedAt = DateTime.UtcNow,
                 }
             );
@@ -229,12 +184,13 @@ namespace ams_api.Controllers
                     HttpOnly = true,
                     Secure = false,
                     SameSite = SameSiteMode.Lax,
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(RefreshExpiryMinutes),
+                    Expires = DateTime.UtcNow.AddDays(
+                        int.Parse(_config["Jwt:RefreshTokenDays"]!)
+                    ),
                     Path = "/",
                 }
             );
 
-            Console.WriteLine("New tokens generated successfully");
             return Ok(new { accessToken = newAccess });
         }
     }
