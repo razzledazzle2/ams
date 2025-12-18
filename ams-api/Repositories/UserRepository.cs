@@ -15,16 +15,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        const string sql =
-            @"
-            SELECT 
-                id,
-                username,
-                password_hash AS ""PasswordHash"",
-                created_at   AS ""CreatedAt""
-            FROM users
-            WHERE username = @Username;
-        ";
+        const string sql = "SELECT * FROM get_user_by_username(@Username);";
 
         using var connection = _context.CreateConnection();
         return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Username = username });
@@ -34,10 +25,11 @@ public class UserRepository : IUserRepository
     {
         const string sql =
             @"
-        INSERT INTO users (username, password_hash, created_at)
-        VALUES (@Username, @PasswordHash, @CreatedAt)
-        RETURNING id;
-        ";
+            SELECT create_user(
+                @Username,
+                @PasswordHash
+            );
+            ";
 
         using var connection = _context.CreateConnection();
         return await connection.ExecuteScalarAsync<Guid>(sql, user);
@@ -45,14 +37,9 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByIdAsync(Guid id)
     {
-        const string sql =
-        @"
-            SELECT id, username, password_hash AS PasswordHash, created_at
-            FROM users
-            WHERE id = @Id;
-        ";
+        const string sql = "SELECT * FROM get_user_by_id(@Id);";
 
-        using var conn = _context.CreateConnection();
-        return await conn.QuerySingleOrDefaultAsync<User>(sql, new { Id = id });
+        using var connection = _context.CreateConnection();
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Id = id });
     }
 }

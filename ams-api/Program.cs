@@ -2,15 +2,52 @@ using System.Text;
 using ams_api.Database;
 using ams_api.Repositories;
 using ams_api.Services;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using DotNetEnv;
+using Microsoft.OpenApi.Models;
+
 Env.Load();
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new() { Title = "AMS API", Version = "v1" });
+
+    options.AddSecurityDefinition(
+        "Bearer",
+        new()
+        {
+            Name = "Authorization",
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            Description = "Enter JWT token like: Bearer {your token}",
+        }
+    );
+
+    options.AddSecurityRequirement(
+        new()
+        {
+            {
+                new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                    {
+                        Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                        Id = "Bearer",
+                    },
+                },
+                Array.Empty<string>()
+            },
+        }
+    );
+});
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
@@ -36,8 +73,8 @@ builder
             ValidIssuer = jwt["Issuer"],
             ValidAudience = jwt["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            // TODO: remove testing 
-            ClockSkew = TimeSpan.Zero
+            // TODO: remove testing
+            // ClockSkew = TimeSpan.Zero,
         };
     });
 
@@ -54,6 +91,15 @@ builder.Services.AddCors(options =>
     });
 });
 var app = builder.Build();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "AMS API v1");
+        options.RoutePrefix = "swagger"; // http://localhost:5051/swagger
+    });
+}
 
 app.UseHttpsRedirection();
 app.UseCors();
