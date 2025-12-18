@@ -15,66 +15,62 @@ public class AssetRepository : IAssetRepository
 
     public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
     {
-        var query =
-        @"
-            SELECT 
-            id,
-            name,
-            category,
-            status,
-            condition,
-            purchase_date AS ""PurchaseDate"",
-            vendor,
-            created_at AS ""CreatedAt"",
-            updated_at AS ""UpdatedAt""
-            FROM assets
-        ";
+        const string sql = "SELECT * FROM get_all_assets();";
+
         using var connection = _context.CreateConnection();
-        var assets = await connection.QueryAsync<Asset>(query);
-        return assets;
+        return await connection.QueryAsync<Asset>(sql);
     }
 
     public async Task<Asset?> GetAssetByIdAsync(Guid id)
     {
-        var query = "SELECT * FROM assets WHERE id = @Id";
+        const string sql = "SELECT * FROM get_asset_by_id(@Id);";
+
         using var connection = _context.CreateConnection();
-        var asset = await connection.QuerySingleOrDefaultAsync<Asset>(query, new { Id = id });
-        return asset;
+        return await connection.QuerySingleOrDefaultAsync<Asset>(sql, new { Id = id });
     }
 
     public async Task<Guid> CreateAssetAsync(Asset asset)
     {
-        var query =
-            @"INSERT INTO assets (name, category, status, condition, purchase_date, vendor, created_at, updated_at) 
-                      VALUES (@name, @category, @status, @condition, @purchaseDate, @vendor, @createdAt, @updatedAt) 
-                      RETURNING id";
+        const string sql =
+            @"
+            SELECT create_asset(
+                @Name,
+                @Category,
+                @Status,
+                @Condition,
+                @PurchaseDate,
+                @Vendor
+            );
+        ";
+
         using var connection = _context.CreateConnection();
-        var id = await connection.ExecuteScalarAsync<Guid>(query, asset);
-        return id;
+        return await connection.ExecuteScalarAsync<Guid>(sql, asset);
     }
 
     public async Task<bool> UpdateAssetAsync(Asset asset)
     {
-        var query =
-            @"UPDATE assets SET 
-                      name = @name, 
-                      category = @category, 
-                      status = @status, 
-                      condition = @condition, 
-                      purchase_date = @purchaseDate, 
-                      vendor = @vendor, 
-                      updated_at = NOW()
-                      WHERE id = @id";
+        const string sql =
+            @"
+            SELECT update_asset(
+                @Id,
+                @Name,
+                @Category,
+                @Status,
+                @Condition,
+                @PurchaseDate,
+                @Vendor
+            );
+        ";
+
         using var connection = _context.CreateConnection();
-        var affectedRows = await connection.ExecuteAsync(query, asset);
-        return affectedRows > 0;
+        return await connection.ExecuteScalarAsync<bool>(sql, asset);
     }
 
     public async Task<bool> DeleteAssetAsync(Guid id)
     {
-        var query = "DELETE FROM assets WHERE id = @Id";
+        const string sql = "SELECT delete_asset(@Id);";
+
         using var connection = _context.CreateConnection();
-        var affectedRows = await connection.ExecuteAsync(query, new { Id = id });
-        return affectedRows > 0;
+        return await connection.ExecuteScalarAsync<bool>(sql, new { Id = id });
     }
 }
