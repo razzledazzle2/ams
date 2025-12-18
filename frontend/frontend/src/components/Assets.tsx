@@ -139,15 +139,17 @@ export const Assets = () => {
         onOpenChange={setAddOpen}
         onAssetCreated={fetchAssets}
       />
-      <div className="flex items-center py-4 ml-4">
-        <Input
-          placeholder="Search assets..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="mx-auto w-[90%]">
+        <div className="flex justify-center py-4">
+          <Input
+            placeholder="Search assets..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="w-[320px]"
+          />
+        </div>
       </div>
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto px-4">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
