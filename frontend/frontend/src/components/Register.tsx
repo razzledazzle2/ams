@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import { Eye, EyeOff } from "lucide-react";
 const API_BASE = "http://localhost:5051";
 
 export const Register = () => {
@@ -13,7 +13,8 @@ export const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,9 +57,7 @@ export const Register = () => {
     <div className="flex min-h-screen items-center justify-center bg-[#dbe2f3]">
       <Card className="w-[90%] max-w-sm bg-[#f9f9fa] text-black">
         <CardHeader>
-          <CardTitle className="text-center">
-            Register
-          </CardTitle>
+          <CardTitle className="text-center">Register</CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -70,22 +69,39 @@ export const Register = () => {
               className="bg-[#ffffff] text-black"
             />
 
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-[#ffffff] text-black"
-            />
+            <div className="relative">
+              <Input
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-[#ffffff] text-black"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
 
-            <Input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="bg-[#ffffff] text-black"
-            />
-
+            <div className="relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="bg-[#ffffff] text-black"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             {errorMessage && (
               <p className="text-sm text-red-400">{errorMessage}</p>
             )}
@@ -94,7 +110,10 @@ export const Register = () => {
               <p className="text-sm text-green-400">{successMessage}</p>
             )}
 
-            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-300">
+            <Button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-300"
+            >
               Register
             </Button>
 
