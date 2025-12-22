@@ -27,9 +27,11 @@ CREATE OR REPLACE FUNCTION create_asset(
     p_status TEXT,
     p_condition TEXT,
     p_purchase_date TIMESTAMP,
-    p_vendor TEXT
+    p_vendor TEXT,
+    p_created_by UUID
 )
 RETURNS UUID
+LANGUAGE plpgsql
 AS $$
 DECLARE
     new_id UUID;
@@ -41,6 +43,7 @@ BEGIN
         condition,
         purchase_date,
         vendor,
+        created_by,
         created_at,
         updated_at
     )
@@ -51,6 +54,7 @@ BEGIN
         p_condition,
         p_purchase_date,
         p_vendor,
+        p_created_by,
         NOW(),
         NOW()
     )
@@ -58,7 +62,7 @@ BEGIN
 
     RETURN new_id;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE OR REPLACE FUNCTION update_asset(
     p_id UUID,

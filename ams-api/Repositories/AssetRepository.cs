@@ -39,7 +39,8 @@ public class AssetRepository : IAssetRepository
                 @Status,
                 @Condition,
                 @PurchaseDate,
-                @Vendor
+                @Vendor,
+                @CreatedBy
             );
         ";
 
