@@ -48,7 +48,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#dbe2f3]">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#16BFFD] to-[#CB3066]">
       <Card className="w-[90%] max-w-sm bg-[#f9f9fa] text-black">
         <CardHeader>
           <CardTitle className="text-center">Login</CardTitle>
