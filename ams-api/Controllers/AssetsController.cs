@@ -40,8 +40,11 @@ namespace ams_api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsset([FromBody] Asset asset)
         {
+            var userId = Guid.Parse(User.FindFirst("uid")!.Value);
+
             asset.CreatedAt = DateTime.UtcNow;
             asset.UpdatedAt = DateTime.UtcNow;
+            asset.CreatedBy = userId;
             var id = await _assetRepository.CreateAssetAsync(asset);
             return Ok(id);
         }

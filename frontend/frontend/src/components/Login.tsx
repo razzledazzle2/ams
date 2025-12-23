@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { saveAccessToken } from "../utils/auth";
+import { Eye, EyeOff } from "lucide-react";
 
 const API_BASE = "http://localhost:5051";
 
@@ -11,6 +12,7 @@ export const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,10 +48,15 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#dbe2f3]">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#16BFFD] to-[#CB3066]">
       <Card className="w-[90%] max-w-sm bg-[#f9f9fa] text-black">
-        <CardHeader>
-          <CardTitle className="text-center">Login</CardTitle>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-center text-2xl font-semibold">
+            Welcome back
+          </CardTitle>
+          <p className="text-center text-sm text-gray-500">
+            Please enter your details
+          </p>
         </CardHeader>
 
         <CardContent>
@@ -61,19 +68,31 @@ export const Login = () => {
               className="bg-[#ffffff] text-black"
             />
 
-            <Input
-              placeholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="bg-[#ffffff] text-black"
-            />
+            <div className="relative">
+              <Input
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-[#ffffff] text-black"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+              </button>
+            </div>
 
             {errorMessage && (
               <p className="text-sm text-red-400">{errorMessage}</p>
             )}
 
-            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-300">
+            <Button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-300"
+            >
               Login
             </Button>
 
