@@ -50,8 +50,13 @@ export const Login = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#16BFFD] to-[#CB3066]">
       <Card className="w-[90%] max-w-sm bg-[#f9f9fa] text-black">
-        <CardHeader>
-          <CardTitle className="text-center">Login</CardTitle>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-center text-2xl font-semibold">
+            Welcome back
+          </CardTitle>
+          <p className="text-center text-sm text-gray-500">
+            Please enter your details
+          </p>
         </CardHeader>
 
         <CardContent>
