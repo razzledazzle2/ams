@@ -1,25 +1,78 @@
 
-CREATE FUNCTION get_all_assets()
-RETURNS SETOF assets
+drop function get_all_assets;
+drop function get_asset_by_id;
+CREATE OR REPLACE FUNCTION get_all_assets()
+RETURNS TABLE (
+    id UUID,
+    name TEXT,
+    category TEXT,
+    status TEXT,
+    condition TEXT,
+    purchase_date TIMESTAMP,
+    vendor TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    created_by UUID,
+    added_by_username TEXT
+)
+LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT *
-    FROM assets;
+    SELECT
+        a.id,
+        a.name,
+        a.category,
+        a.status,
+        a.condition::TEXT,
+        a.purchase_date,
+        a.vendor,
+        a.created_at,
+        a.updated_at,
+        a.created_by,
+        u.username::TEXT
+
+    FROM assets a
+    JOIN users u ON a.created_by = u.id;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
-
-CREATE FUNCTION get_asset_by_id(p_id UUID)
-RETURNS SETOF assets
+CREATE OR REPLACE FUNCTION get_asset_by_id(p_id UUID)
+RETURNS TABLE (
+    id UUID,
+    name TEXT,
+    category TEXT,
+    status TEXT,
+    condition TEXT,
+    purchase_date TIMESTAMP,
+    vendor TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    created_by UUID,
+    added_by_username TEXT
+)
+LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT *
-    FROM assets
-    WHERE id = p_id;
+    SELECT
+        a.id,
+        a.name,
+        a.category,
+        a.status,
+        a.condition::TEXT,
+        a.purchase_date,
+        a.vendor,
+        a.created_at,
+        a.updated_at,
+        a.created_by,
+        u.username::TEXT
+
+    FROM assets a
+    JOIN users u ON a.created_by = u.id
+    WHERE a.id = p_id;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE OR REPLACE FUNCTION create_asset(
     p_name TEXT,
@@ -40,7 +93,7 @@ BEGIN
         name,
         category,
         status,
-        condition,
+         "condition",
         purchase_date,
         vendor,
         created_by,

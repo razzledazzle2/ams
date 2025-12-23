@@ -105,6 +105,10 @@ export const Assets = () => {
       },
     },
     {
+      accessorKey: "addedByUsername",
+      header: "Created By",
+    },
+    {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (

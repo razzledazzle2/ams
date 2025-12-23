@@ -12,4 +12,5 @@ public class Asset
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public Guid CreatedBy { get; set; }
+    public string? AddedByUsername { get; set; }
 }
