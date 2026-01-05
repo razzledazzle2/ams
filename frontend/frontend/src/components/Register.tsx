@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-const API_BASE = "http://localhost:5051";
+import { api } from "@/client";
 
 export const Register = () => {
   const [username, setUsername] = useState("");
@@ -31,25 +31,17 @@ export const Register = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+      const response = await api.post("/api/users/register", {
+        username,
+        password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(data || "Registration failed");
-        return;
-      }
 
       setErrorMessage("");
       setSuccessMessage("Account created. Redirecting to login…");
       setTimeout(() => navigate("/login"), 1500);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setErrorMessage("Something went wrong. Try again.");
+      setErrorMessage(err.response?.data || "Something went wrong. Try again.");
     }
   };
 

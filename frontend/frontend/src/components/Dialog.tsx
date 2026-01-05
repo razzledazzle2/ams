@@ -19,9 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { getAccessToken } from "@/utils/auth";
-import { apiFetch } from "@/lib/apiFetch";
-const API_BASE = "http://localhost:5051";
+import { api } from "@/client";
 
 type Props = {
   onAssetCreated: () => void;
@@ -55,22 +53,14 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await apiFetch(`${API_BASE}/api/assets`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          category,
-          purchaseDate,
-          vendor: vendorDetails,
-          condition,
-          status,
-        }),
+      await api.post("/api/assets", {
+        name,
+        category,
+        purchaseDate,
+        vendor: vendorDetails,
+        condition,
+        status,
       });
-
-      if (!res.ok) throw new Error("Failed to create asset");
 
       onAssetCreated();
       close();

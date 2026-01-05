@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { saveAccessToken } from "../utils/auth";
 import { Eye, EyeOff } from "lucide-react";
-
-const API_BASE = "http://localhost:5051";
+import { api } from "@/client";
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -25,25 +24,16 @@ export const Login = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
+      const response = await api.post("/api/users/login", {
+        username,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(data || "Login failed");
-        return;
-      }
-
-      saveAccessToken(data.accessToken);
+      saveAccessToken(response.data.accessToken);
       navigate("/assets");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setErrorMessage("Something went wrong. Try again.");
+      setErrorMessage(err.response?.data || "Something went wrong. Try again.");
     }
   };
 

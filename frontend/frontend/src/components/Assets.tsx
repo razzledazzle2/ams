@@ -28,8 +28,7 @@ import { logout } from "../utils/auth";
 
 import { Icon, SortAscIcon, ArrowUpDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "@/lib/apiFetch";
-const API_BASE = "http://localhost:5051";
+import { api } from "@/client";
 
 type Asset = {
   id: string;
@@ -53,20 +52,15 @@ export const Assets = () => {
   const navigate = useNavigate();
   const fetchAssets = async () => {
     try {
-      const res = await apiFetch(`${API_BASE}/api/assets`);
-
+      const res = await api.get("/api/assets");
+      setAssets(res.data);
+    } catch (err: any) {
+      console.error(err);
       // if unauthorised, logout
-      if (res.status === 401) {
+      if (err.response?.status === 401) {
         logout();
         navigate("/login");
-        return;
       }
-      if (!res.ok) throw new Error("Failed to fetch assets");
-
-      const data = await res.json();
-      setAssets(data);
-    } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }

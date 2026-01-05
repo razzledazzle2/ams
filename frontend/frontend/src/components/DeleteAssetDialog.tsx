@@ -10,15 +10,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { apiFetch } from "@/lib/apiFetch";
-import { getAccessToken } from "@/utils/auth";
+import { api } from "@/client";
+
 type Props = {
   asset: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDeleted: () => void;
 };
-const API_BASE = "http://localhost:5051";
 
 export function DeleteAssetDialog({
   asset,
@@ -28,11 +27,7 @@ export function DeleteAssetDialog({
 }: Props) {
   const handleDelete = async () => {
     try {
-      const res = await apiFetch(`${API_BASE}/api/assets/${asset.id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) throw new Error("Failed to delete asset");
+      await api.delete(`/api/assets/${asset.id}`);
 
       onDeleted();
       onOpenChange(false);

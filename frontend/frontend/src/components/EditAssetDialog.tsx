@@ -19,9 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
-import { getAccessToken } from "@/utils/auth";
-import { apiFetch } from "@/lib/apiFetch";
-const API_BASE = "http://localhost:5051";
+import { api } from "@/client";
 
 type Props = {
   asset: any;
@@ -69,22 +67,14 @@ export function EditAssetDialog({
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await apiFetch(`${API_BASE}/api/assets/${asset.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          category,
-          purchaseDate,
-          vendor: vendorDetails,
-          condition,
-          status,
-        }),
+      await api.put(`/api/assets/${asset.id}`, {
+        name,
+        category,
+        purchaseDate,
+        vendor: vendorDetails,
+        condition,
+        status,
       });
-
-      if (!res.ok) throw new Error("Failed to create asset");
 
       onAssetUpdated();
       close();
