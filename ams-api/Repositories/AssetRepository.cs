@@ -40,7 +40,10 @@ public class AssetRepository : IAssetRepository
                 @Condition,
                 @PurchaseDate,
                 @Vendor,
-                @CreatedBy
+                @CreatedBy,
+                @Model,
+                @Barcode,
+                @ImageUrl
             );
         ";
 
@@ -59,7 +62,10 @@ public class AssetRepository : IAssetRepository
                 @Status,
                 @Condition,
                 @PurchaseDate,
-                @Vendor
+                @Vendor,
+                @Model,
+                @Barcode,
+                @ImageUrl
             );
         ";
 

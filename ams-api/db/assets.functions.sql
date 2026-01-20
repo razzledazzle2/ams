@@ -13,7 +13,10 @@ RETURNS TABLE (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     created_by UUID,
-    added_by_username TEXT
+    added_by_username TEXT,
+    model TEXT,
+    barcode TEXT,
+    image_url TEXT
 )
 LANGUAGE plpgsql
 AS $$
@@ -24,14 +27,16 @@ BEGIN
         a.name,
         a.category,
         a.status,
-        a.condition::TEXT,
+        a."condition",
         a.purchase_date,
         a.vendor,
         a.created_at,
         a.updated_at,
         a.created_by,
-        u.username::TEXT
-
+        u.username::TEXT as added_by_username,
+        a.model,
+        a.barcode,
+        a.image_url
     FROM assets a
     JOIN users u ON a.created_by = u.id;
 END;
@@ -49,7 +54,10 @@ RETURNS TABLE (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     created_by UUID,
-    added_by_username TEXT
+    added_by_username TEXT,
+    model TEXT,
+    barcode TEXT,
+    image_url TEXT
 )
 LANGUAGE plpgsql
 AS $$
@@ -60,14 +68,16 @@ BEGIN
         a.name,
         a.category,
         a.status,
-        a.condition::TEXT,
+        a."condition",
         a.purchase_date,
         a.vendor,
         a.created_at,
         a.updated_at,
         a.created_by,
-        u.username::TEXT
-
+        u.username::TEXT as added_by_username,
+        a.model,
+        a.barcode,
+        a.image_url
     FROM assets a
     JOIN users u ON a.created_by = u.id
     WHERE a.id = p_id;
@@ -81,7 +91,10 @@ CREATE OR REPLACE FUNCTION create_asset(
     p_condition TEXT,
     p_purchase_date TIMESTAMP,
     p_vendor TEXT,
-    p_created_by UUID
+    p_created_by UUID,
+    p_model TEXT,
+    p_barcode TEXT,
+    p_image_url TEXT
 )
 RETURNS UUID
 LANGUAGE plpgsql
@@ -97,6 +110,9 @@ BEGIN
         purchase_date,
         vendor,
         created_by,
+        model,
+        barcode,
+        image_url,
         created_at,
         updated_at
     )
@@ -108,6 +124,9 @@ BEGIN
         p_purchase_date,
         p_vendor,
         p_created_by,
+        p_model,
+        p_barcode,
+        p_image_url,
         NOW(),
         NOW()
     )
@@ -124,7 +143,10 @@ CREATE OR REPLACE FUNCTION update_asset(
     p_status TEXT,
     p_condition TEXT,
     p_purchase_date TIMESTAMP,
-    p_vendor TEXT
+    p_vendor TEXT,
+    p_model TEXT,
+    p_barcode TEXT,
+    p_image_url TEXT
 )
 RETURNS BOOLEAN
 AS $$
@@ -134,9 +156,12 @@ BEGIN
         name = p_name,
         category = p_category,
         status = p_status,
-        condition = p_condition,
+        "condition" = p_condition,
         purchase_date = p_purchase_date,
         vendor = p_vendor,
+        model = p_model,
+        barcode = p_barcode,
+        image_url = p_image_url,
         updated_at = NOW()
     WHERE id = p_id;
 

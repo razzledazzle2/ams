@@ -44,12 +44,15 @@ export function EditAssetDialog({
   const [status, setStatus] = useState<
     "Available" | "Assigned" | "Maintenance"
   >("Available");
+  const [model, setModel] = useState("");
+  const [barcode, setBarcode] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   useEffect(() => {
     if (!asset) return;
     setName(asset.name);
     setCategory(asset.category);
 
-    // get only date from purchasedate 
+    // get only date from purchasedate
     if (asset.purchaseDate) {
       setPurchaseDate(String(asset.purchaseDate).slice(0, 10)); // "YYYY-MM-DD"
     } else {
@@ -58,6 +61,9 @@ export function EditAssetDialog({
     setVendorDetails(asset.vendor);
     setCondition(asset.condition);
     setStatus(asset.status);
+    setModel(asset.model);
+    setBarcode(asset.barcode || "");
+    setImageUrl(asset.imageUrl || "");
   }, [asset, open]);
 
   const close = () => {
@@ -74,6 +80,9 @@ export function EditAssetDialog({
         vendor: vendorDetails,
         condition,
         status,
+        model,
+        barcode,
+        imageUrl,
       });
 
       onAssetUpdated();
@@ -90,7 +99,7 @@ export function EditAssetDialog({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create Asset</DialogTitle>
+            <DialogTitle>Edit Asset</DialogTitle>
             <DialogDescription>
               Add a new asset to your portfolio.
             </DialogDescription>
@@ -135,6 +144,15 @@ export function EditAssetDialog({
               />
             </div>
             <div className="grid gap-2">
+              <Label>Model</Label>
+              <Input
+                placeholder="e.g. MBP-2021"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
               <Label>Product Condition</Label>
               <Input
                 placeholder="e.g. New / Used / Faulty"
@@ -143,6 +161,21 @@ export function EditAssetDialog({
                 required
               />
             </div>
+            <div className="grid gap-2">
+              <Label>Image URL</Label>
+              <Input
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Barcode</Label>
+              <Input
+                value={barcode}
+                onChange={(e) => setBarcode(e.target.value)}
+              />
+            </div>
+
             <div className="grid gap-2">
               <Label>Status</Label>
               <Select

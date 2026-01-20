@@ -70,26 +70,26 @@ export const Assets = () => {
   }, []);
 
   const columns: ColumnDef<Asset>[] = [
+    { accessorKey: "name", header: "Name" },
+    { accessorKey: "category", header: "Category" },
+    { accessorKey: "vendor", header: "Vendor" },
+    { accessorKey: "model", header: "Model" },
     {
-      accessorKey: "name",
-      header: "Name",
+      accessorKey: "imageUrl",
+      header: "Image",
+      cell: ({ getValue }) => {
+        const url = getValue<string>();
+        return url ? (
+          <img src={url} className="h-12 w-12 object-cover rounded" />
+        ) : (
+          "—"
+        );
+      },
     },
-    {
-      accessorKey: "category",
-      header: "Category",
-    },
-    {
-      accessorKey: "vendor",
-      header: "Vendor",
-    },
-    {
-      accessorKey: "condition",
-      header: "Condition",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-    },
+    { accessorKey: "barcode", header: "Barcode" },
+
+    { accessorKey: "condition", header: "Condition" },
+    { accessorKey: "status", header: "Status" },
     {
       accessorKey: "purchaseDate",
       header: "Purchase Date",
@@ -98,10 +98,7 @@ export const Assets = () => {
         return value ? new Date(value).toLocaleDateString() : "—";
       },
     },
-    {
-      accessorKey: "addedByUsername",
-      header: "Created By",
-    },
+    { accessorKey: "addedByUsername", header: "Created By" },
     {
       id: "actions",
       header: "Actions",
@@ -157,7 +154,7 @@ export const Assets = () => {
                     <div className="flex items-center gap-2">
                       {flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
 
                       {header.column.getCanSort() && (
@@ -187,7 +184,7 @@ export const Assets = () => {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

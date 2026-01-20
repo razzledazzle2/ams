@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
@@ -23,7 +23,7 @@ import { api } from "@/client";
 
 type Props = {
   onAssetCreated: () => void;
-  open,
+  open;
   onOpenChange: (open: boolean) => void;
 };
 export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
@@ -36,6 +36,10 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
   const [purchaseDate, setPurchaseDate] = useState("");
   const [vendorDetails, setVendorDetails] = useState("");
   const [condition, setCondition] = useState("");
+  const [barcode, setBarcode] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [model, setModel] = useState("");
+
   const [status, setStatus] = useState<
     "Available" | "Assigned" | "Maintenance"
   >("Available");
@@ -48,6 +52,9 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
     setVendorDetails("");
     setCondition("");
     setStatus("Available");
+    setBarcode("");
+    setImageUrl("");
+    setModel("");
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +67,9 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
         vendor: vendorDetails,
         condition,
         status,
+        model,
+        barcode,
+        imageUrl,
       });
 
       onAssetCreated();
@@ -121,6 +131,15 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
               />
             </div>
             <div className="grid gap-2">
+              <Label>Model</Label>
+              <Input
+                placeholder="e.g. MBP-2021"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
               <Label>Product Condition</Label>
               <Input
                 placeholder="e.g. New / Used / Faulty"
@@ -130,8 +149,28 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
               />
             </div>
             <div className="grid gap-2">
+              <Label>Image URL (optional)</Label>
+              <Input
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label>Barcode (optional)</Label>
+              <Input
+                value={barcode}
+                onChange={(e) => setBarcode(e.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-2">
               <Label>Status</Label>
-              <Select value={status} onValueChange={(v) => setStatus(v as "Available" | "Assigned" | "Maintenance")}>
+              <Select
+                value={status}
+                onValueChange={(v) =>
+                  setStatus(v as "Available" | "Assigned" | "Maintenance")
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -145,11 +184,7 @@ export function AddAssetDialog({ open, onOpenChange, onAssetCreated }: Props) {
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              onClick={close}
-              variant="outline"
-            >
+            <Button type="button" onClick={close} variant="outline">
               Cancel
             </Button>
 
