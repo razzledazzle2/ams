@@ -27,6 +27,7 @@ public class UserRepository : IUserRepository
             @"
             SELECT create_user(
                 @Username,
+                @Email,
                 @PasswordHash
             );
             ";

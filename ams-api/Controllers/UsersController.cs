@@ -44,6 +44,7 @@ namespace ams_api.Controllers
             var newUser = new User
             {
                 Username = request.Username,
+                Email = request.Email,
                 PasswordHash = hash,
                 CreatedAt = DateTime.UtcNow,
             };

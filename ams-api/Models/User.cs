@@ -11,4 +11,6 @@ public class User
     public string Role { get; set; } = "user";
 
     public DateTime CreatedAt { get; set; }
+
+    public string Email { get; set; } = string.Empty;
 }

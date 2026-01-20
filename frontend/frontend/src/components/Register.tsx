@@ -9,6 +9,7 @@ import { api } from "@/client";
 
 export const Register = () => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -20,7 +21,7 @@ export const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !password || !confirmPassword) {
+    if (!username || !password || !confirmPassword || !email) {
       setErrorMessage("All fields are required");
       return;
     }
@@ -33,6 +34,7 @@ export const Register = () => {
     try {
       const response = await api.post("/api/users/register", {
         username,
+        email,
         password,
       });
 
@@ -65,7 +67,12 @@ export const Register = () => {
               onChange={(e) => setUsername(e.target.value)}
               className="bg-[#ffffff] text-black"
             />
-
+            <Input
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-[#ffffff] text-black"
+            />
             <div className="relative">
               <Input
                 placeholder="Password"

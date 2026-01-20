@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAccessToken, saveAccessToken, logout } from "@/utils/auth";
 
 export const api = axios.create({
-  baseURL: "http://localhost:5051",
+  baseURL: "http://localhost:5000",
   withCredentials: true,
 });
 

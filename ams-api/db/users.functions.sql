@@ -23,6 +23,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION create_user(
     p_username TEXT,
+    p_email TEXT,
     p_password_hash TEXT
 )
 RETURNS UUID
@@ -33,11 +34,13 @@ BEGIN
     INSERT INTO users (
         username,
         password_hash,
+        email,
         created_at
     )
     VALUES (
         p_username,
         p_password_hash,
+        p_email,
         NOW()
     )
     RETURNING id INTO new_id;

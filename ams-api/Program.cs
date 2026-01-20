@@ -97,7 +97,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "AMS API v1");
-        options.RoutePrefix = "swagger"; // http://localhost:5051/swagger
+        options.RoutePrefix = "swagger"; // http://localhost:5000/swagger
     });
 }
 
