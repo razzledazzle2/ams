@@ -90,7 +90,7 @@ export function EditAssetDialog({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create Asset</DialogTitle>
+            <DialogTitle>Edit Asset</DialogTitle>
             <DialogDescription>
               Add a new asset to your portfolio.
             </DialogDescription>
